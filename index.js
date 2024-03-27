@@ -78,11 +78,9 @@ app.post('/api/persons', (req, res) => {
       error: 'Name has already in the phonebook' 
     });
   }
-  console.log("A")
-  console.log("A")
   persons = persons.concat(newPerson);
   res.status(201).json(newPerson);
 });
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
