@@ -6,6 +6,9 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
+    "build:ui": "rm -rf dist && cd ./frontend && rm -rf dist && npm run build && cd ../ && mkdir dist && @powershell robocopy ./frontend/dist ./dist /e",
+    "deploy": "fly deploy",
+    "deploy:full": "npm run build:ui && npm run deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
