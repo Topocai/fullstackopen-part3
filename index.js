@@ -3,8 +3,15 @@ const app = express();
 
 const cors = require('cors');
 
+app.use(express.static('dist'));
+
 app.use(cors());
 app.use(express.json());
+
+let morgan = require('morgan');
+
+morgan.token('body', (req, res) => JSON.stringify(req.body));
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 let persons = [
     { 
@@ -33,16 +40,26 @@ app.get('/api/persons', (req, res) => {
     res.json(persons);
 });
 
+app.put('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id);
+    const body = req.body;
+
+    if(body.name === undefined || body.number === undefined)
+        return res.status(400).json({ error: 'Name or number is missing' });
+
+    persons = persons.map(person => person.id !== id ? person : body);
+    res.json(body);
+});
+
 app.get('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id);
     const person = persons.find(person => person.id === id);
-    if(person) {
-    if(person) {
+    if(person) 
+    {
         res.json(person);
-    } else {
-        res.status(404).end();
-    }
-    } else {
+    } 
+    else 
+    {
         res.status(404).end();
     }
 });
