@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
+    "dev": "nodemon --inspect index.js",
     "build:ui": "rm -rf dist && cd ./frontend && rm -rf dist && npm run build && cd ../ && mkdir dist && @powershell robocopy ./frontend/dist ./dist /e",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
@@ -28,6 +28,7 @@
   "dependencies": {
     "cors": "2.8.5",
     "express": "4.19.1",
+    "mongoose": "8.2.4",
     "morgan": "1.10.0"
   },
   "devDependencies": {
