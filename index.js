@@ -26,51 +26,31 @@ mongoose.connect(url)
 
 const ContactModel = require('./mongo.js');
 
-app.get('/api/persons', (req, res) => {
-    ContactModel.find({}).then(contacts => {
-      res.json(contacts);
-    });
-});
-
-app.put('/api/persons/:id', (req, res) => {
-
-    const id = req.params.id
-    const body = req.body
-
-    if(body.name === undefined || body.number === undefined)
-        return res.status(400).json({ error: 'Name or number is missing' });
-
-    ContactModel.findByIdAndUpdate(id, {...body})
-    .then(contact => res.json(contact))
-    .catch(() => res.status(404).end())
-
-});
-
-app.get('/api/persons/:id', (req, res) => {
-    const id = req.params.id;
-
-    ContactModel.findById(id)
-    .then(contact => res.json(contact))
-    .catch(err => 
-    {
-      console.error(err);
-      res.status(404).end();
-    })
-});
-
-app.delete('/api/persons/:id', (req, res) => {
-    const id = req.params.id
-    ContactModel.findByIdAndDelete(id)
-    .then(() => res.status(204).end())
-    .catch(() => res.status(404).end())
-});
-
 app.get('/info', (req, res) => {
     const date = new Date();
     ContactModel.find({}).then(contacts => {
       res.send(`<p>Phonebook has info for ${contacts.length} people<br/>${date}</p>`);
     })
     .catch(() => res.status(404).end());
+});
+
+app.get('/api/persons', (req, res) => {
+    ContactModel.find({}).then(contacts => {
+      res.json(contacts);
+    });
+});
+
+app.get('/api/persons/:id', (req, res, next) => {
+    const id = req.params.id;
+
+    ContactModel.findById(id)
+    .then(contact => {
+      if(contact)
+        res.json(contact);
+      else
+        res.status(404).end();
+    })
+    .catch(err => next(err))
 });
 
 app.post('/api/persons', (req, res) => {
@@ -112,8 +92,52 @@ app.post('/api/persons', (req, res) => {
       res.status(500).end();
     });
   });
-
 });
+
+app.put('/api/persons/:id', (req, res, next) => {
+  const id = req.params.id
+  const body = req.body
+
+  if(body.name === undefined || body.number === undefined)
+      return res.status(400).json({ error: 'Name or number is missing' });
+
+  ContactModel.findByIdAndUpdate(id, {...body}, {new: true})
+  .then(contact => {
+    if(contact)
+      res.json(contact);
+    else
+      res.status(404).end();
+  })
+  .catch(err => next(err))
+});
+
+app.delete('/api/persons/:id', (req, res, next) => {
+  const id = req.params.id
+  ContactModel.findByIdAndDelete(id)
+  .then(contact => {
+    if(contact)
+      res.status(204).end();
+    else
+      res.status(404).end();
+  })
+  .catch(err => next(err))
+});
+
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message);
+
+  if (error.name === 'CastError') {
+      return res.status(400).send({ error: 'malformatted id' });
+  } 
+  else if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: error.message });
+  }
+
+  next(error);
+}
+
+app.use(errorHandler);
+
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT);

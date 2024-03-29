@@ -60,7 +60,10 @@ const App = () => {
     if(confirm) 
     {
       contactServices.removeContact(id)
-      .then(() => refresh())
+      .then(() => {
+        refresh();
+        showNotification(`Deleted '${persons.find(person => person.id === id).name}'`, 'grey')
+      })
       .catch(() => {
         showNotification(`Information of ${persons.find(person => person.id === id).name} has already been removed from server`, 'red')
         refresh();
