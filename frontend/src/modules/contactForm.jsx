@@ -1,15 +1,15 @@
 const ContactForm = ({ onSubmitHandler, onNameHandler, onNumberHandler }) => {
-    return (
+  return (
       <form onSubmit={onSubmitHandler}>
-        <label>Name: 
+        <label>Name:
           <input onChange={onNameHandler} type='text' required/>
         </label>
-        <label>number: 
+        <label>number:
           <input onChange={onNumberHandler} type='text' pattern='[0-9]{1,}-[0-9]{1,}' required />
         </label>
         <button type="submit">add</button>
       </form>
-    )
-  }
+  )
+}
 
-  export default ContactForm;
+export default ContactForm

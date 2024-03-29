@@ -1,11 +1,11 @@
 const FilterInput = ({ onFilterHandler }) => {
-    return (
+  return (
       <div>
-        <label>Filter shown with: 
+        <label>Filter shown with:
           <input onChange={onFilterHandler} type='text' />
         </label>
       </div>
-    )
+  )
 }
 
-export default FilterInput;
+export default FilterInput
