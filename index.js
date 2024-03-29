@@ -53,7 +53,7 @@ app.get('/api/persons/:id', (req, res, next) => {
     .catch(err => next(err))
 });
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
   const body = req.body;
 
   if (!body.name || !body.number) 
@@ -87,10 +87,7 @@ app.post('/api/persons', (req, res) => {
     .then(savedPerson => {
       res.json(savedPerson);
     })
-    .catch(err => {
-      console.error(err);
-      res.status(500).end();
-    });
+    .catch(err => next(err));
   });
 });
 
@@ -101,7 +98,7 @@ app.put('/api/persons/:id', (req, res, next) => {
   if(body.name === undefined || body.number === undefined)
       return res.status(400).json({ error: 'Name or number is missing' });
 
-  ContactModel.findByIdAndUpdate(id, {...body}, {new: true})
+  ContactModel.findByIdAndUpdate(id, {...body}, {new: true, runValidators: true, context: 'query'})
   .then(contact => {
     if(contact)
       res.json(contact);

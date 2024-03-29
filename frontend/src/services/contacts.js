@@ -9,7 +9,7 @@ const getAll = () =>   {
 
 const addContact = (new_contact) =>   {
     const promise = axios.post(baseUrl, new_contact);
-    return promise.then(response => response.data);
+    return promise.then(response => response.data).catch(error => error.response.data);
 }
 
 const removeContact = (id) =>   {
@@ -21,7 +21,7 @@ const updateContact = (id, contact) =>   {
     console.log("Updating contact", id, "with", contact)
     
     const promise = axios.put(`${baseUrl}/${id}`, contact);
-    return promise.then(response => response.data);
+    return promise.then(response => response.data).catch(error => error.response.data);
 }
 
 export default {getAll, addContact, removeContact, updateContact}

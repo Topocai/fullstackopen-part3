@@ -77,7 +77,7 @@ const App = () => {
 
     if(!isNaN(newContact.name)) return alert('Name cant be only numbers')
     
-    const isExisting = persons.find(person => person.name === newContact.name || person.number === newContact.number);
+    const isExisting = persons.find(person => person.name.toLowerCase() === newContact.name.toLowerCase() || person.number.toLowerCase() === newContact.number.toLowerCase());
     const refresh = (updatedContact) => setPersons(persons.map(person => person.id !== updatedContact.id ? person : updatedContact));
 
     if(isExisting) 
@@ -89,6 +89,11 @@ const App = () => {
       {
         contactServices.updateContact(isExisting.id, dataToUpdate)
         .then(updatedContact => {
+          if(updatedContact.error) 
+          {
+            showNotification(updatedContact.error, 'red')
+            return
+          }
           refresh(updatedContact)
           showNotification(`Updated '${updatedContact.name}'`)
         })
@@ -98,6 +103,11 @@ const App = () => {
     {
       contactServices.addContact(newContact)
       .then(contact => {
+        if(contact.error) 
+        {
+          showNotification(contact.error, 'red')
+          return
+        }
         setPersons(persons.concat(contact))
         showNotification(`Added '${contact.name}'`)
       })

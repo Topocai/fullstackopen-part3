@@ -5,7 +5,7 @@ const ContactForm = ({ onSubmitHandler, onNameHandler, onNumberHandler }) => {
           <input onChange={onNameHandler} type='text' required/>
         </label>
         <label>number: 
-          <input onChange={onNumberHandler} type='text' pattern='[0-9]+' required />
+          <input onChange={onNumberHandler} type='text' pattern='[0-9]{1,}-[0-9]{1,}' required />
         </label>
         <button type="submit">add</button>
       </form>
